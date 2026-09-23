@@ -5,6 +5,7 @@ __pycache__/
 pose_guides/
 .pytest_cache/
 .ruff_cache/
+.base44/preview/output/
 models/**/*.safetensors
 models/**/*.bin
 models/**/*.ckpt

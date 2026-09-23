@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FNF-OMNI preview</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #111318; color: #e6e6e6; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  p.note { color: #9aa0aa; margin: 0 0 24px; font-size: 14px; }
+  section { background: #1a1d24; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  img, video { max-width: 100%; border-radius: 6px; display: block; }
+  code { background: #262a33; padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>FNF-OMNI-VIDEO-V1 — dev preview</h1>
+  <p class="note">Rendered from <code>examples/sample_chart.json</code> with the torch-free paths.
+    Re-renders automatically when <code>.py</code>/<code>.json</code> files change. Last render: <span id="status">…</span></p>
+  <section><h2>Pose-guide preview (4s, <code>--pose-preview</code>)</h2>
+    <video id="vid" controls autoplay loop muted playsinline></video></section>
+  <section><h2>Animated storyboard (<code>--sneak-peek</code>, GIF)</h2><img id="gif" alt="storyboard gif"></section>
+  <section><h2>Storyboard contact sheet (<code>--sneak-peek</code>, PNG)</h2><img id="png" alt="storyboard png"></section>
+</main>
+<script>
+  let last = null;
+  async function refresh() {
+    const s = (await fetch('output/status.txt?' + Date.now()).then(r => r.ok ? r.text() : 'rendering…')).trim();
+    document.getElementById('status').textContent = s;
+    if (s === last || !/^\d{4}-/.test(s)) return;
+    last = s;
+    const q = '?v=' + encodeURIComponent(s);
+    document.getElementById('vid').src = 'output/pose_preview.mp4' + q;
+    document.getElementById('gif').src = 'output/storyboard.gif' + q;
+    document.getElementById('png').src = 'output/storyboard.png' + q;
+  }
+  refresh(); setInterval(refresh, 3000);
+</script>
+</body>
+</html>
