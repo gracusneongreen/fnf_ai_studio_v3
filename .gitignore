@@ -9,3 +9,5 @@ models/**/*.safetensors
 models/**/*.bin
 models/**/*.ckpt
 models/**/*.pt
+
+universe_out/

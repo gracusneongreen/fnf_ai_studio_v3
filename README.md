@@ -10,10 +10,12 @@ health bar, and score as a deterministic final pass.
 ```text
 fnf_video_engine.py                         Main pipeline and CLI
 fnf_omni_preview.py                         FNF-OMNI-PREVIEW-LITE engine
+universe_ai_fnf.py                          Universe-ai-fnf skill router and CLI
 examples/sample_chart.json                  Psych Engine sample chart
 models/download_weights.py                  Atomic weight installer
 models/FNF-OMNI-VIDEO-V1/model_manifest.json Model configuration
 models/FNF-OMNI-PREVIEW-LITE/model_manifest.json Preview configuration
+models/UNIVERSE-AI-FNF/model_manifest.json  Universe-ai-fnf skill manifest
 models/FNF-OMNI-VIDEO-V1/README.md           Weight publishing instructions
 tests/                                      Parser, renderer, and model tests
 ```
@@ -121,6 +123,31 @@ The MP4 is silent; mux the original song afterward if needed, for example:
 ```bash
 ffmpeg -i fnf_gameplay.mp4 -i Inst.ogg -c:v copy -c:a aac -shortest final.mp4
 ```
+
+### Universe-ai-fnf
+
+`UNIVERSE-AI-FNF` is a second model in this repo: a deterministic skill router
+that turns one chart into everything around the video. Skills are `eyes`,
+`audio`, `hands`, `coder`, `draw`, `mods`, and `computer_use`; see
+`models/UNIVERSE-AI-FNF/README.md` for what each one emits.
+
+```bash
+python universe_ai_fnf.py --status
+
+python universe_ai_fnf.py \
+  --chart examples/sample_chart.json \
+  --reference-image boyfriend.png \
+  --audio Inst.wav \
+  --mod-name UniverseAI \
+  --output-dir universe_out
+```
+
+The run writes `universe_out/universe_report.json` plus per-skill artifacts,
+including an installable Psych Engine mod at
+`universe_out/mods/<ModName>/` and a playtest plan under
+`universe_out/computer_use/`. Pass `--skills draw,coder` to run a subset;
+prerequisites are added automatically. No weights are downloaded and the whole
+router runs on CPU.
 
 ## Chart interpretation
 
