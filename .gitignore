@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.mp4
+pose_guides/
+.pytest_cache/
+.ruff_cache/
+models/**/*.safetensors
+models/**/*.bin
+models/**/*.ckpt
+models/**/*.pt

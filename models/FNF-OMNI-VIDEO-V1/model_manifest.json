@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "FNF-OMNI-VIDEO-V1",
+  "architecture": "FNF-OMNI-VIDEO-V1",
+  "pipeline_class": "FNFOmniVideoV1Pipeline",
+  "config_class": "FNFOmniVideoV1Config",
+  "weights": {
+    "filename": "fnf-omni-video-v1.safetensors",
+    "format": "diffusers_lora",
+    "sha256": null
+  },
+  "source": {
+    "repo_id": null,
+    "filename": null,
+    "revision": "main",
+    "url": null
+  },
+  "components": {
+    "base_model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+    "motion_adapter": "guoyww/animatediff-motion-adapter-v1-5-2",
+    "controlnet": "lllyasviel/sd-controlnet-openpose"
+  }
+}

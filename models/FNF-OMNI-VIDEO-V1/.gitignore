@@ -1,0 +1,5 @@
+*.safetensors
+*.bin
+*.ckpt
+*.pt
+!.gitignore

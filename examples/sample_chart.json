@@ -1,0 +1,40 @@
+{
+  "song": {
+    "song": "FNF-OMNI-VIDEO-V1 Sample",
+    "bpm": 120,
+    "speed": 1,
+    "notes": [
+      {
+        "lengthInSteps": 16,
+        "mustHitSection": false,
+        "sectionNotes": [
+          [500, 0, 0, ""],
+          [1000, 1, 0, ""],
+          [1500, 2, 250, ""],
+          [1750, 3, 0, ""]
+        ]
+      },
+      {
+        "lengthInSteps": 16,
+        "mustHitSection": true,
+        "sectionNotes": [
+          [2250, 0, 0, ""],
+          [2500, 1, 0, ""],
+          [2750, 2, 0, ""],
+          [3000, 3, 0, ""],
+          [3500, 4, 0, "Alt Animation"]
+        ]
+      },
+      {
+        "lengthInSteps": 16,
+        "mustHitSection": false,
+        "changeBPM": true,
+        "bpm": 150,
+        "sectionNotes": [
+          [4250, 0, 0, ""],
+          [4650, 4, 0, ""]
+        ]
+      }
+    ]
+  }
+}

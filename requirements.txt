@@ -1,0 +1,11 @@
+# Choose the CUDA-specific torch wheel for your platform when installing PyTorch.
+torch>=2.2
+diffusers>=0.31.0,<0.40
+transformers>=4.41
+accelerate>=0.31
+safetensors>=0.4
+peft>=0.11
+huggingface-hub>=0.23
+opencv-python>=4.8
+numpy>=1.26
+Pillow>=10
