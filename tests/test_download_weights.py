@@ -1,4 +1,5 @@
 import hashlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,6 +22,15 @@ class WeightDownloaderTests(unittest.TestCase):
         self.assertEqual(
             manifest["weights"]["filename"], "fnf-omni-video-v1.safetensors"
         )
+        preview_manifest_path = (
+            Path(__file__).parents[1]
+            / "models"
+            / "FNF-OMNI-PREVIEW-LITE"
+            / "model_manifest.json"
+        )
+        preview_manifest = json.loads(preview_manifest_path.read_text(encoding="utf-8"))
+        self.assertEqual(preview_manifest["engine_class"], "FNFOmniPreviewEngine")
+        self.assertIsNone(preview_manifest["weights"])
 
     def test_local_install_is_atomic_and_checksum_verified(self):
         with tempfile.TemporaryDirectory() as directory:

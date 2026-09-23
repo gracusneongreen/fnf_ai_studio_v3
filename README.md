@@ -9,9 +9,11 @@ health bar, and score as a deterministic final pass.
 
 ```text
 fnf_video_engine.py                         Main pipeline and CLI
+fnf_omni_preview.py                         FNF-OMNI-PREVIEW-LITE engine
 examples/sample_chart.json                  Psych Engine sample chart
 models/download_weights.py                  Atomic weight installer
 models/FNF-OMNI-VIDEO-V1/model_manifest.json Model configuration
+models/FNF-OMNI-PREVIEW-LITE/model_manifest.json Preview configuration
 models/FNF-OMNI-VIDEO-V1/README.md           Weight publishing instructions
 tests/                                      Parser, renderer, and model tests
 ```
@@ -53,6 +55,28 @@ weights are published.
 
 ## Run
 
+### Sneak Peek storyboard
+
+Review key beats, section switches, camera framing, character placement, and a
+deterministic background palette before running diffusion:
+
+```bash
+python fnf_video_engine.py \
+  --chart examples/sample_chart.json \
+  --sneak-peek \
+  --preview-camera wide \
+  --preview-style "neon rooftop stage" \
+  --preview-output storyboard.png
+```
+
+Set `--preview-output storyboard.gif` for a low-FPS animated preview. Useful
+controls include `--preview-max-frames`, `--preview-beat-stride`,
+`--preview-columns`, `--preview-size`, `--preview-fps`, and
+`--duration-seconds`. This path uses `FNFOmniPreviewEngine` and never loads
+Torch, Diffusers, or model weights.
+
+### Pose-guide preview
+
 First validate chart parsing, BPM poses, HUD animation, and MP4 support without
 downloading models:
 
@@ -63,6 +87,8 @@ python fnf_video_engine.py \
   --duration-seconds 4 \
   --output pose_preview.mp4
 ```
+
+### Full FNF-OMNI-VIDEO-V1 render
 
 Generate the AI-backed video:
 

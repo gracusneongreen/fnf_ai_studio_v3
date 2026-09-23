@@ -14,7 +14,7 @@ import json
 import logging
 import math
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -53,12 +53,26 @@ class BPMSegment:
 
 
 @dataclass(frozen=True)
+class ChartSection:
+    """Timing and active singer metadata for one chart section."""
+
+    section_index: int
+    start_ms: float
+    end_ms: float
+    start_frame: int
+    end_frame: int
+    bpm: float
+    must_hit: bool
+
+
+@dataclass(frozen=True)
 class ChartTimeline:
     song_name: str
     fps: int
     initial_bpm: float
     notes: Tuple[NoteEvent, ...]
     bpm_segments: Tuple[BPMSegment, ...]
+    sections: Tuple[ChartSection, ...]
     duration_ms: float
 
     @property
@@ -120,6 +134,7 @@ def parse_chart(path: Path, fps: int, tail_ms: float = 1000.0) -> ChartTimeline:
     section_start_ms = 0.0
     bpm_segments: List[BPMSegment] = [BPMSegment(0.0, 0, initial_bpm, 0)]
     notes: List[NoteEvent] = []
+    chart_sections: List[ChartSection] = []
 
     for section_index, section in enumerate(sections):
         if not isinstance(section, dict):
@@ -146,6 +161,24 @@ def parse_chart(path: Path, fps: int, tail_ms: float = 1000.0) -> ChartTimeline:
                     bpm_segments.append(segment)
 
         must_hit = bool(section.get("mustHitSection", False))
+        length_steps_value = section.get("lengthInSteps")
+        if length_steps_value is None:
+            length_steps_value = float(section.get("sectionBeats", 4.0)) * 4.0
+        length_steps = _positive_number(
+            length_steps_value, f"song.notes[{section_index}].lengthInSteps"
+        )
+        section_end_ms = section_start_ms + length_steps * (60000.0 / current_bpm / 4.0)
+        chart_sections.append(
+            ChartSection(
+                section_index=section_index,
+                start_ms=section_start_ms,
+                end_ms=section_end_ms,
+                start_frame=milliseconds_to_frame(section_start_ms, fps),
+                end_frame=milliseconds_to_frame(section_end_ms, fps),
+                bpm=current_bpm,
+                must_hit=must_hit,
+            )
+        )
         raw_notes = section.get("sectionNotes", [])
         if not isinstance(raw_notes, list):
             raise ValueError(f"song.notes[{section_index}].sectionNotes must be a list")
@@ -180,13 +213,7 @@ def parse_chart(path: Path, fps: int, tail_ms: float = 1000.0) -> ChartTimeline:
                 )
             )
 
-        length_steps_value = section.get("lengthInSteps")
-        if length_steps_value is None:
-            length_steps_value = float(section.get("sectionBeats", 4.0)) * 4.0
-        length_steps = _positive_number(
-            length_steps_value, f"song.notes[{section_index}].lengthInSteps"
-        )
-        section_start_ms += length_steps * (60000.0 / current_bpm / 4.0)
+        section_start_ms = section_end_ms
 
     notes.sort(key=lambda note: (note.time_ms, note.singer, note.direction))
     final_note_ms = max((note.time_ms + note.sustain_ms for note in notes), default=0.0)
@@ -198,6 +225,7 @@ def parse_chart(path: Path, fps: int, tail_ms: float = 1000.0) -> ChartTimeline:
         initial_bpm=initial_bpm,
         notes=tuple(notes),
         bpm_segments=tuple(bpm_segments),
+        sections=tuple(chart_sections),
         duration_ms=duration_ms,
     )
 
@@ -655,6 +683,71 @@ def _batched_indices(frame_count: int, chunk_size: int) -> Iterable[range]:
         yield range(start, min(start + chunk_size, frame_count))
 
 
+def limit_timeline(
+    timeline: ChartTimeline, duration_seconds: Optional[float]
+) -> ChartTimeline:
+    """Return a timeline truncated to a short preview duration."""
+
+    if duration_seconds is None:
+        return timeline
+    duration_ms = min(timeline.duration_ms, duration_seconds * 1000.0)
+    if math.isclose(duration_ms, timeline.duration_ms):
+        return timeline
+    sections = tuple(
+        replace(
+            section,
+            end_ms=min(section.end_ms, duration_ms),
+            end_frame=milliseconds_to_frame(
+                min(section.end_ms, duration_ms), timeline.fps
+            ),
+        )
+        for section in timeline.sections
+        if section.start_ms < duration_ms
+    )
+    return replace(
+        timeline,
+        notes=tuple(note for note in timeline.notes if note.time_ms < duration_ms),
+        bpm_segments=tuple(
+            segment
+            for segment in timeline.bpm_segments
+            if segment.start_ms < duration_ms
+        ),
+        sections=sections,
+        duration_ms=duration_ms,
+    )
+
+
+def render_sneak_peek(args: argparse.Namespace) -> None:
+    """Export a FNF-OMNI-PREVIEW-LITE storyboard without diffusion inference."""
+
+    from fnf_omni_preview import FNFOmniPreviewConfig, FNFOmniPreviewEngine
+
+    timeline = parse_chart(args.chart.expanduser().resolve(), args.fps, args.tail_ms)
+    timeline = limit_timeline(timeline, args.duration_seconds)
+    pose_renderer = PoseGuideRenderer(timeline, args.preview_size, args.pose_hold_ms)
+    compositor = FNFHUDCompositor(timeline, args.preview_size, args.approach_ms)
+    engine = FNFOmniPreviewEngine(
+        timeline,
+        pose_renderer,
+        compositor,
+        FNFOmniPreviewConfig(
+            size=args.preview_size,
+            max_frames=args.preview_max_frames,
+            columns=args.preview_columns,
+            beat_stride=args.preview_beat_stride,
+            gif_fps=args.preview_fps,
+            camera_angle=args.preview_camera,
+            background_style=args.preview_style,
+        ),
+    )
+    keyframes = engine.export(args.preview_output)
+    LOGGER.info(
+        "Wrote %s with %d storyboard keyframes",
+        args.preview_output.expanduser().resolve(),
+        len(keyframes),
+    )
+
+
 def render_video(args: argparse.Namespace) -> None:
     chart_path = args.chart.expanduser().resolve()
     timeline = parse_chart(chart_path, args.fps, args.tail_ms)
@@ -775,6 +868,26 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="skip model loading and use the pose guides as the video background",
     )
+    parser.add_argument(
+        "--sneak-peek",
+        action="store_true",
+        help="export a fast FNF-OMNI-PREVIEW-LITE PNG storyboard or GIF",
+    )
+    parser.add_argument(
+        "--preview-output",
+        type=Path,
+        default=Path("fnf_sneak_peek.png"),
+        help="sneak peek output ending in .png or .gif",
+    )
+    parser.add_argument("--preview-size", type=int, default=384)
+    parser.add_argument("--preview-max-frames", type=int, default=12)
+    parser.add_argument("--preview-columns", type=int, default=3)
+    parser.add_argument("--preview-beat-stride", type=int, default=4)
+    parser.add_argument("--preview-fps", type=float, default=2.0)
+    parser.add_argument(
+        "--preview-camera", choices=("wide", "medium", "close"), default="wide"
+    )
+    parser.add_argument("--preview-style", default="neon rhythm stage")
 
     parser.add_argument(
         "--base-model", default="stable-diffusion-v1-5/stable-diffusion-v1-5"
@@ -829,10 +942,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         parser.error("--pose-hold-ms cannot be negative")
     if args.approach_ms <= 0:
         parser.error("--approach-ms must be positive")
+    if args.preview_size < 128:
+        parser.error("--preview-size must be at least 128")
+    if args.preview_max_frames <= 0:
+        parser.error("--preview-max-frames must be positive")
+    if args.preview_columns <= 0:
+        parser.error("--preview-columns must be positive")
+    if args.preview_beat_stride <= 0:
+        parser.error("--preview-beat-stride must be positive")
+    if not math.isfinite(args.preview_fps) or args.preview_fps <= 0:
+        parser.error("--preview-fps must be positive")
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(levelname)s %(message)s",
     )
+    if args.sneak_peek:
+        render_sneak_peek(args)
+        return 0
     if (
         not args.pose_preview
         and args.weights_path is None

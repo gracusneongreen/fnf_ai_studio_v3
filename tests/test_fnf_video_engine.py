@@ -13,6 +13,7 @@ from fnf_video_engine import (
     FNFOmniVideoV1Config,
     FNFOmniVideoV1Pipeline,
     PoseGuideRenderer,
+    limit_timeline,
     milliseconds_to_frame,
     parse_chart,
 )
@@ -115,6 +116,33 @@ class ChartParserTests(unittest.TestCase):
         self.assertEqual(len(timeline.bpm_segments), 1)
         self.assertEqual(timeline.bpm_at(0).bpm, 150)
         self.assertAlmostEqual(timeline.duration_ms, 1600)
+
+    def test_sections_expose_timing_and_active_singer(self):
+        example = Path(__file__).parents[1] / "examples" / "sample_chart.json"
+        timeline = parse_chart(example, fps=24, tail_ms=0)
+        self.assertEqual(len(timeline.sections), 3)
+        self.assertEqual(
+            [section.start_ms for section in timeline.sections],
+            [0.0, 2000.0, 4000.0],
+        )
+        self.assertEqual(
+            [section.must_hit for section in timeline.sections],
+            [False, True, False],
+        )
+        self.assertAlmostEqual(timeline.sections[-1].end_ms, 5600.0)
+
+    def test_preview_timeline_limit_truncates_all_timing_collections(self):
+        example = Path(__file__).parents[1] / "examples" / "sample_chart.json"
+        timeline = parse_chart(example, fps=24, tail_ms=1000)
+        limited = limit_timeline(timeline, 2.5)
+
+        self.assertEqual(limited.duration_ms, 2500.0)
+        self.assertTrue(all(note.time_ms < 2500 for note in limited.notes))
+        self.assertTrue(
+            all(segment.start_ms < 2500 for segment in limited.bpm_segments)
+        )
+        self.assertEqual(len(limited.sections), 2)
+        self.assertEqual(limited.sections[-1].end_ms, 2500.0)
 
 
 class RenderingTests(unittest.TestCase):

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "name": "FNF-OMNI-PREVIEW-LITE",
+  "architecture": "FNF-OMNI-PREVIEW-LITE",
+  "engine_class": "FNFOmniPreviewEngine",
+  "config_class": "FNFOmniPreviewConfig",
+  "backend": "programmatic_storyboard",
+  "weights": null,
+  "inputs": [
+    "psych_chart",
+    "camera_angle",
+    "background_style"
+  ],
+  "outputs": [
+    "png_contact_sheet",
+    "animated_gif"
+  ]
+}
