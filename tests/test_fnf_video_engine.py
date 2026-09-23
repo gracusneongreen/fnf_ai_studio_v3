@@ -162,8 +162,8 @@ class RenderingTests(unittest.TestCase):
         body = renderer._base_body(0.5)
         self.assertLess(body[2][0], body[1][0])
         self.assertGreater(body[5][0], body[1][0])
-        self.assertLess(renderer._posed_body("player", 0, 500)[4][0], 0.71)
-        self.assertGreater(renderer._posed_body("player", 3, 500)[7][0], 0.71)
+        self.assertLess(renderer.body_points("player", 0, 500)[4][0], 0.71)
+        self.assertGreater(renderer.body_points("player", 3, 500)[7][0], 0.71)
 
     def test_hud_compositor_returns_bgr_frame(self):
         background = Image.new("RGB", (256, 256), (10, 20, 30))

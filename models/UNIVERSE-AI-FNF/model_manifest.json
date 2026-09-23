@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "name": "Universe-ai-fnf",
+  "architecture": "UNIVERSE-AI-FNF",
+  "model_class": "UniverseAIFNF",
+  "config_class": "UniverseAIFNFConfig",
+  "backend": "deterministic_skill_router",
+  "weights": null,
+  "skills": [
+    "eyes",
+    "audio",
+    "hands",
+    "coder",
+    "draw",
+    "mods",
+    "computer_use"
+  ],
+  "inputs": [
+    "psych_chart",
+    "reference_image",
+    "wav_audio"
+  ],
+  "outputs": [
+    "vision_report",
+    "beatmap",
+    "hand_track",
+    "psych_lua_script",
+    "fnf_sprite_sheet",
+    "sparrow_atlas",
+    "health_icons",
+    "psych_mod_folder",
+    "gui_action_plan"
+  ]
+}

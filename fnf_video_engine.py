@@ -333,9 +333,11 @@ class PoseGuideRenderer:
             (center_x + 0.038, 0.235),
         ]
 
-    def _posed_body(
+    def body_points(
         self, singer: str, direction: Optional[int], time_ms: float
     ) -> List[Tuple[float, float]]:
+        """Normalized BODY_18 points for a singer, posed for ``direction``."""
+
         center_x = 0.29 if singer == "opponent" else 0.71
         points = self._base_body(center_x)
         if direction is None:
@@ -367,7 +369,7 @@ class PoseGuideRenderer:
         for singer in SINGERS:
             active_note = self._active_note(singer, time_ms)
             direction = active_note.direction if active_note else None
-            normalized = self._posed_body(singer, direction, time_ms)
+            normalized = self.body_points(singer, direction, time_ms)
             points = [
                 (int(round(x * self.size)), int(round(y * self.size)))
                 for x, y in normalized
