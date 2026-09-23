@@ -1,6 +1,8 @@
-# Base44 dev environment. The sandbox has no GPU, so only the torch-free paths
-# (sneak-peek storyboard + pose-guide preview) run here. The renderer watches
-# the source and re-renders; the web service serves the results on port 3000.
+# Base44 dev environment.
+#  renderer: torch-free preview renderer (PNG/GIF storyboard + pose-guide MP4),
+#            watches source and re-renders into .base44/preview/output/.
+#  web: FastAPI app serving the preview page (/) and the computer-use chat (/chat),
+#       plus the chat API (/api/chat). Port 3000.
 services:
   renderer:
     image: python:3.12-slim
@@ -17,12 +19,21 @@ services:
 
   web:
     image: python:3.12-slim
-    working_dir: /app/.base44/preview
+    working_dir: /app
     volumes:
       - ./:/app
-    command: python -m http.server 3000 --bind 0.0.0.0
+      - web-pip-cache:/root/.cache/pip
+    command: >
+      sh -c "pip install -q -r agent/requirements.txt &&
+             uvicorn agent.app:app --host 0.0.0.0 --port 3000 --reload"
     ports:
       - "3000:3000"
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    environment:
+      - PYTHONUNBUFFERED=1
 
 volumes:
   pip-cache:
+  web-pip-cache:

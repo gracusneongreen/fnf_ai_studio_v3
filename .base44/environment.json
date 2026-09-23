@@ -2,5 +2,17 @@
   "previewPort": 3000,
   "healthPath": "/",
   "startCommand": "docker compose -f docker-compose.base44.yml up -d",
-  "secrets": []
+  "secrets": [
+    {
+      "name": "ANTHROPIC_API_KEY",
+      "description": "Anthropic API key for the computer-use model. Get it at console.anthropic.com → API Keys.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": true
+    },
+    {
+      "name": "COMPUTER_USE_URL",
+      "description": "Base URL of your computer-use desktop HTTP server (e.g. the Anthropic computer-use-demo streamable HTTP server) where FNF Psych Engine and Krita are running, e.g. http://<host>:8000.",
+      "requiredAtBoot": false
+    }
+  ]
 }
