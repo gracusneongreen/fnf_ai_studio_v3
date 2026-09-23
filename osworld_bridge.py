@@ -44,6 +44,44 @@ class HumanMotionConfig:
             raise ValueError("typing intervals must be ordered and non-negative")
 
 
+def generate_cursor_trajectory(
+    start: Point,
+    target: Point,
+    motion: HumanMotionConfig = HumanMotionConfig(),
+) -> List[Point]:
+    """Generate a cubic-Bezier cursor path with jitter and decelerating arrival."""
+
+    motion.validate()
+    rng = random.Random(motion.seed + round(start[0]) + round(target[1]))
+    dx, dy = target[0] - start[0], target[1] - start[1]
+    distance = math.hypot(dx, dy)
+    if distance == 0:
+        return [start] * motion.path_steps
+    nx, ny = -dy / distance, dx / distance
+    curve = rng.uniform(-0.2, 0.2) * distance
+    control_1 = (
+        start[0] + dx * 0.32 + nx * curve,
+        start[1] + dy * 0.32 + ny * curve,
+    )
+    control_2 = (
+        start[0] + dx * 0.78 + nx * curve * 0.5,
+        start[1] + dy * 0.78 + ny * curve * 0.5,
+    )
+    overshoot = (
+        target[0] + dx / distance * motion.overshoot_px,
+        target[1] + dy / distance * motion.overshoot_px,
+    )
+    path: List[Point] = []
+    for index in range(motion.path_steps):
+        raw_t = index / (motion.path_steps - 1)
+        t = 1.0 - (1.0 - raw_t) ** 2
+        point = OSWorldBridge._cubic_bezier(start, control_1, control_2, overshoot, t)
+        jitter = motion.jitter_px * math.sin(raw_t * math.pi)
+        path.append((point[0] + nx * jitter, point[1] + ny * jitter))
+    path.append(target)
+    return path
+
+
 class OSWorldBridge:
     """Best-effort desktop adapter; optional dependencies stay optional."""
 
@@ -114,35 +152,7 @@ class OSWorldBridge:
 
     def cursor_path(self, start: Point, target: Point) -> List[Point]:
         """Build a cubic Bezier path with jitter and a small target overshoot."""
-
-        rng = random.Random(self.motion.seed + round(start[0]) + round(target[1]))
-        dx, dy = target[0] - start[0], target[1] - start[1]
-        distance = math.hypot(dx, dy)
-        if distance == 0:
-            return [start] * self.motion.path_steps
-        nx, ny = -dy / distance, dx / distance
-        curve = rng.uniform(-0.2, 0.2) * distance
-        control_1 = (
-            start[0] + dx * 0.32 + nx * curve,
-            start[1] + dy * 0.32 + ny * curve,
-        )
-        control_2 = (
-            start[0] + dx * 0.78 + nx * curve * 0.5,
-            start[1] + dy * 0.78 + ny * curve * 0.5,
-        )
-        overshoot = (
-            target[0] + dx / distance * self.motion.overshoot_px,
-            target[1] + dy / distance * self.motion.overshoot_px,
-        )
-        path: List[Point] = []
-        for index in range(self.motion.path_steps):
-            raw_t = index / (self.motion.path_steps - 1)
-            t = 1.0 - (1.0 - raw_t) ** 2
-            point = self._cubic_bezier(start, control_1, control_2, overshoot, t)
-            jitter = self.motion.jitter_px * math.sin(raw_t * math.pi)
-            path.append((point[0] + nx * jitter, point[1] + ny * jitter))
-        path.append(target)
-        return path
+        return generate_cursor_trajectory(start, target, self.motion)
 
     @staticmethod
     def _cubic_bezier(

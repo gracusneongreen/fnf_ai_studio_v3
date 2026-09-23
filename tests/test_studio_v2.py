@@ -5,7 +5,13 @@ from urllib.request import urlopen
 from pathlib import Path
 
 from cloud_ai_connector import CloudAIConfig, FreeAIConnector
-from osworld_bridge import HumanMotionConfig, OSWorldBridge
+from osworld_bridge import (
+    HumanMotionConfig,
+    OSWorldBridge,
+    generate_cursor_trajectory,
+)
+from asset_parser import load_character_config, parse_spritesheet
+from src.local_bridge import LocalBridgeService, create_app
 from pose_generator import FNFOpenPoseGenerator
 from studio import FNFOMNIStudioV2, StudioConfig
 from fnf_video_engine import parse_chart
@@ -64,6 +70,14 @@ class StudioV2Tests(unittest.TestCase):
         self.assertGreater(len(path), 8)
         self.assertTrue(any(point[0] != point[1] for point in path[1:-1]))
 
+    def test_cursor_trajectory_utility_matches_bridge_contract(self):
+        path = generate_cursor_trajectory(
+            (0, 0), (100, 100), HumanMotionConfig(path_steps=8)
+        )
+        self.assertEqual(path[0], (0, 0))
+        self.assertEqual(path[-1], (100, 100))
+        self.assertGreater(len(path), 8)
+
     def test_cursor_overlay_changes_image_pixels(self):
         image = Image.new("RGB", (64, 64), "black")
         OSWorldBridge._draw_cursor(image, (20, 20))
@@ -109,6 +123,36 @@ class StudioV2Tests(unittest.TestCase):
         ) as response:
             body = response.read().decode("utf-8")
         self.assertIn("Connect Your Apps", body)
+
+    def test_local_bridge_exposes_structured_routes(self):
+        app = create_app(LocalBridgeService())
+        paths = {route.path for route in app.routes}
+        self.assertIn("/api/input/move", paths)
+        self.assertIn("/api/apps/{app_id}/launch", paths)
+        self.assertIn("/health", paths)
+
+    def test_local_asset_parsers_read_sparrow_and_character_json(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sheet = root / "FNF-FANS-V2.xml"
+            sheet.write_text(
+                '<TextureAtlas imagePath="fans.png">'
+                '<SubTexture name="bf idle0000" x="1" y="2" width="32" '
+                'height="48" frameX="-3" frameY="-4" frameWidth="40" '
+                'frameHeight="56"/>'
+                "</TextureAtlas>",
+                encoding="utf-8",
+            )
+            character = root / "bf.json"
+            character.write_text(
+                '{"image":"FNF-FANS-V2","scale":0.8,"animations":[{"name":"idle"}]}',
+                encoding="utf-8",
+            )
+            parsed_sheet = parse_spritesheet(sheet)
+            parsed_character = load_character_config(character)
+            self.assertEqual(parsed_sheet.image_path, "fans.png")
+            self.assertEqual(parsed_sheet.frames[0].frame_width, 40)
+            self.assertEqual(parsed_character["animations"][0]["name"], "idle")
 
 
 if __name__ == "__main__":

@@ -181,3 +181,17 @@ song objects. It integrates `changeBPM`, `bpm`, `lengthInSteps`, and
 charts marked `format: "psych_v1"` use absolute lanes 0-3 for the player and
 4-7 for the opponent. Lane modulo four maps to Left, Down, Up, Right, and
 sustain lengths keep the corresponding pose active.
+
+## Local desktop bridge
+
+Start the optional FastAPI bridge on loopback:
+
+```bash
+python src/local_bridge.py
+```
+
+It listens on `127.0.0.1:8000` and exposes structured app target/launch,
+mouse, keyboard, hotkey, and screenshot endpoints. It only resolves the
+configured app IDs and never accepts arbitrary shell commands. Local
+Sparrow/TexturePacker XML spritesheets and character JSON files can be loaded
+with `asset_parser.py`.
