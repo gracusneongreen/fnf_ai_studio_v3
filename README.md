@@ -12,6 +12,7 @@ python main.py --status --cloud-free
 python main.py --chart examples/sample_chart.json --sneak-peek \
   --output outputs/storyboard.png --preview-camera wide
 python main.py --chat
+python main.py --dashboard --cloud-free
 ```
 
 `--cloud-free` only uses a local Ollama instance or an explicitly configured
@@ -42,6 +43,13 @@ overshoot, micro-jitter, deceleration, natural typing cadence, screenshot
 streams, and a visible cursor overlay. Typed text is never retained in the
 action log; install `mss` and `pyautogui` from `requirements.txt` to enable the
 desktop adapter.
+
+Open the dashboard preview at `http://127.0.0.1:8765` after starting the
+dashboard. The **Connect Your Apps** tab reads these optional local settings:
+`FNF_PSYCH_ENGINE_PATH`, `FNF_SPRITE_EDITOR_PATH`, `FNF_VIDEO_EDITOR_PATH`, and
+`FNF_WORKSPACE`. Connected entries can be targeted or launched from the panel;
+chat commands `/status`, `/connect`, `/target APP_ID`, and `/launch APP_ID`
+are also available.
 
 `FNF-OMNI-VIDEO-V1` is a hybrid 1:1 video architecture. Its
 `FNFOmniVideoV1Pipeline` combines AnimateDiff, OpenPose ControlNet, and custom

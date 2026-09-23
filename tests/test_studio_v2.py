@@ -1,5 +1,7 @@
 import tempfile
+import threading
 import unittest
+from urllib.request import urlopen
 from pathlib import Path
 
 from cloud_ai_connector import CloudAIConfig, FreeAIConnector
@@ -8,6 +10,7 @@ from pose_generator import FNFOpenPoseGenerator
 from studio import FNFOMNIStudioV2, StudioConfig
 from fnf_video_engine import parse_chart
 from PIL import Image
+from web_dashboard import ConnectedApps, DashboardService, create_dashboard_server
 
 
 class StudioV2Tests(unittest.TestCase):
@@ -77,6 +80,35 @@ class StudioV2Tests(unittest.TestCase):
         bridge._pyautogui = lambda: FakePyAutoGUI()
         bridge.type_text("secret-token")
         self.assertNotIn("secret-token", str(bridge.actions))
+
+    def test_dashboard_exposes_status_and_free_chat_fallback(self):
+        service = DashboardService(studio=FNFOMNIStudioV2(StudioConfig(size=128)))
+        status = service.status()
+        self.assertEqual(status["studio"]["studio"], "FNF-OMNI-STUDIO-V2")
+        response = service.chat("Give me a general design idea for a neon stage")
+        self.assertIn("Free chat mode", response["reply"])
+        self.assertEqual(response["mode"], "fallback")
+
+    def test_dashboard_can_target_a_known_app(self):
+        apps = ConnectedApps()
+        response = apps.target("sprite-editor")
+        self.assertEqual(response["active_app"], "sprite-editor")
+        self.assertTrue(any(app["active"] for app in response["apps"]))
+
+    def test_dashboard_server_serves_html(self):
+        server = create_dashboard_server(
+            DashboardService(studio=FNFOMNIStudioV2(StudioConfig(size=128))),
+            port=0,
+        )
+        self.addCleanup(server.server_close)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.shutdown)
+        with urlopen(
+            f"http://127.0.0.1:{server.server_address[1]}/", timeout=2
+        ) as response:
+            body = response.read().decode("utf-8")
+        self.assertIn("Connect Your Apps", body)
 
 
 if __name__ == "__main__":

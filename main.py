@@ -19,6 +19,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, default=Path("outputs/fnf_sneak_peek.png"))
     parser.add_argument("--sneak-peek", action="store_true", help="export a fast storyboard")
     parser.add_argument("--chat", action="store_true", help="start the Rich terminal chat")
+    parser.add_argument("--dashboard", action="store_true", help="start the local web dashboard")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--status", action="store_true", help="print engine status")
     parser.add_argument("--cloud-free", action="store_true", help="use local/free providers only")
     parser.add_argument("--fps", type=int, default=24)
@@ -33,6 +36,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     studio = FNFOMNIStudioV2(
         StudioConfig(fps=args.fps, size=args.size, cloud_free=args.cloud_free)
     )
+    if args.dashboard:
+        from web_dashboard import DashboardService, create_dashboard_server
+
+        server = create_dashboard_server(
+            service=DashboardService(studio),
+            host=args.host,
+            port=args.port,
+        )
+        print(f"FNF-OMNI-STUDIO-V2 dashboard: http://{args.host}:{args.port}")
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            server.server_close()
+        return 0
     if args.chat or not (args.status or args.sneak_peek):
         StudioChat(studio).run()
         return 0
