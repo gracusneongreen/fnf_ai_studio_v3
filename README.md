@@ -1,4 +1,41 @@
-# FNF-OMNI-VIDEO-V1
+# FNF-OMNI-STUDIO-V2
+
+`FNF-OMNI-STUDIO-V2` is the orchestration layer on top of the deterministic
+V1 chart, pose, storyboard, and OpenCV HUD primitives. It exposes a complete
+local CLI, optional Rich chat, a free/local AI connector, reference-asset
+discovery, and an auditable OSWorld-style computer-use bridge.
+
+## V2 quick start
+
+```bash
+python main.py --status --cloud-free
+python main.py --chart examples/sample_chart.json --sneak-peek \
+  --output outputs/storyboard.png --preview-camera wide
+python main.py --chat
+```
+
+`--cloud-free` only uses a local Ollama instance or an explicitly configured
+Hugging Face endpoint. It does not bypass provider quotas, payment controls, or
+authentication requirements. Set `HF_TOKEN` only when using a Hugging Face
+free-tier model; no token is required for local Ollama.
+
+### V2 modules
+
+```text
+main.py                    CLI entry point and flags
+studio.py                  FNF-OMNI-STUDIO-V2 orchestration API
+cli_chat.py                Rich slash-command terminal interface
+pose_generator.py          held singing poses and beat metadata
+hud_compositor.py          public HUD facade
+cloud_ai_connector.py      local/free provider selection
+osworld_bridge.py          optional screenshots and input logging
+assets/references/         stable reference asset contract
+```
+
+Reference image filenames are documented in
+`assets/references/README.md`. Small generated PNG placeholders are included
+for smoke tests; replace them with project-owned reference art before
+conditioning a render.
 
 `FNF-OMNI-VIDEO-V1` is a hybrid 1:1 video architecture. Its
 `FNFOmniVideoV1Pipeline` combines AnimateDiff, OpenPose ControlNet, and custom

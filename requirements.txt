@@ -9,3 +9,4 @@ huggingface-hub>=0.23
 opencv-python>=4.8
 numpy>=1.26
 Pillow>=10
+rich>=13.7
