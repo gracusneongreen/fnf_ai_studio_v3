@@ -53,7 +53,7 @@ class OSWorldBridge:
 
     def type_text(self, text: str, interval: float = 0.0) -> None:
         self._pyautogui().write(text, interval=interval)
-        self._record("type", text=text, interval=interval)
+        self._record("type", length=len(text), interval=interval)
 
     def hotkey(self, *keys: str) -> None:
         self._pyautogui().hotkey(*keys)

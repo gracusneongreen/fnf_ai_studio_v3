@@ -45,6 +45,7 @@ class FNFOMNIStudioV2:
                 ollama_url=config._cloud.ollama_url,
                 ollama_model=config._cloud.ollama_model,
                 huggingface_model=config._cloud.huggingface_model,
+                request_timeout=config._cloud.request_timeout,
             )
         )
 

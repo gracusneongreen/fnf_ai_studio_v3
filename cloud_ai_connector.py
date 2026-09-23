@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+from urllib.parse import urlparse
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -32,7 +33,16 @@ class FreeAIConnector:
     """Small standard-library connector for local and free-tier providers."""
 
     def __init__(self, config: CloudAIConfig = CloudAIConfig()) -> None:
+        self._validate_ollama_url(config.ollama_url)
         self.config = config
+
+    @staticmethod
+    def _validate_ollama_url(url: str) -> None:
+        parsed = urlparse(url)
+        if parsed.scheme != "http" or parsed.username or parsed.password:
+            raise ValueError("Ollama URL must be an unauthenticated HTTP URL")
+        if parsed.hostname not in {"localhost", "127.0.0.1", "::1"}:
+            raise ValueError("Ollama URL must target the local machine")
 
     def status(self) -> Dict[str, Any]:
         return {
@@ -79,7 +89,7 @@ class FreeAIConnector:
                 result = json.loads(response.read().decode("utf-8"))
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
             raise CloudAIError("Ollama request failed") from exc
-        text = result.get("response")
+        text = result.get("response") if isinstance(result, dict) else None
         if not isinstance(text, str):
             raise CloudAIError("Ollama returned no response text")
         return text

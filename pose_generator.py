@@ -39,8 +39,9 @@ class FNFOpenPoseGenerator:
                 180.0, note.sustain_ms
             ):
                 poses[note.singer] = note.direction
-        beat_ms = 60000.0 / self.timeline.bpm_at(timestamp_ms).bpm
-        beat_number = timestamp_ms / beat_ms
+        segment = self.timeline.bpm_at(timestamp_ms)
+        beat_ms = 60000.0 / segment.bpm
+        beat_number = max(0.0, timestamp_ms - segment.start_ms) / beat_ms
         phase = beat_number - int(beat_number)
         return PoseFrame(
             timestamp_ms=timestamp_ms,

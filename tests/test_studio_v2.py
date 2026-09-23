@@ -28,9 +28,19 @@ class StudioV2Tests(unittest.TestCase):
         self.assertTrue(pose.is_beat)
         self.assertEqual(generator.direction_name(0), "left")
 
+    def test_pose_generator_resets_phase_at_bpm_change(self):
+        timeline = parse_chart(self.chart, fps=24, tail_ms=0)
+        generator = FNFOpenPoseGenerator(timeline, size=128)
+        segment = timeline.bpm_segments[1]
+        self.assertTrue(generator.pose_at(segment.start_ms).is_beat)
+
     def test_cloud_free_status_is_explicit(self):
         connector = FreeAIConnector(CloudAIConfig(cloud_free=True))
         self.assertTrue(connector.status()["cloud_free"])
+
+    def test_ollama_must_be_local(self):
+        with self.assertRaisesRegex(ValueError, "local machine"):
+            FreeAIConnector(CloudAIConfig(ollama_url="http://169.254.169.254"))
 
     def test_sneak_peek_writes_requested_output(self):
         with tempfile.TemporaryDirectory() as directory:
