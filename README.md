@@ -1,4 +1,55 @@
-# FNF-OMNI-VIDEO-V1
+# FNF-OMNI-STUDIO-V2
+
+`FNF-OMNI-STUDIO-V2` is the orchestration layer on top of the deterministic
+V1 chart, pose, storyboard, and OpenCV HUD primitives. It exposes a complete
+local CLI, optional Rich chat, a free/local AI connector, reference-asset
+discovery, and an auditable OSWorld-style computer-use bridge.
+
+## V2 quick start
+
+```bash
+python main.py --status --cloud-free
+python main.py --chart examples/sample_chart.json --sneak-peek \
+  --output outputs/storyboard.png --preview-camera wide
+python main.py --chat
+python main.py --dashboard --cloud-free
+```
+
+`--cloud-free` only uses a local Ollama instance or an explicitly configured
+Hugging Face endpoint. It does not bypass provider quotas, payment controls, or
+authentication requirements. Set `HF_TOKEN` only when using a Hugging Face
+free-tier model; no token is required for local Ollama.
+
+### V2 modules
+
+```text
+main.py                    CLI entry point and flags
+studio.py                  FNF-OMNI-STUDIO-V2 orchestration API
+cli_chat.py                Rich slash-command terminal interface
+pose_generator.py          held singing poses and beat metadata
+hud_compositor.py          public HUD facade
+cloud_ai_connector.py      local/free provider selection
+osworld_bridge.py          optional screenshots and input logging
+assets/references/         stable reference asset contract
+```
+
+Reference image filenames are documented in
+`assets/references/README.md`. Small generated PNG placeholders are included
+for smoke tests; replace them with project-owned reference art before
+conditioning a render.
+
+`OSWorldBridge` provides deterministic cubic-Bezier cursor paths with
+overshoot, micro-jitter, deceleration, natural typing cadence, screenshot
+streams, and a visible cursor overlay. Typed text is never retained in the
+action log; install `mss` and `pyautogui` from `requirements.txt` to enable the
+desktop adapter.
+
+Open the dashboard preview at `http://127.0.0.1:8765` after starting the
+dashboard. The **Connect Your Apps** tab reads these optional local settings:
+`FNF_PSYCH_ENGINE_PATH`, `FNF_SPRITE_EDITOR_PATH`, `FNF_VIDEO_EDITOR_PATH`, and
+`FNF_WORKSPACE`. Connected entries can be targeted or launched from the panel;
+chat commands `/status`, `/connect`, `/target APP_ID`, and `/launch APP_ID`
+are also available.
 
 `FNF-OMNI-VIDEO-V1` is a hybrid 1:1 video architecture. Its
 `FNFOmniVideoV1Pipeline` combines AnimateDiff, OpenPose ControlNet, and custom
@@ -130,3 +181,17 @@ song objects. It integrates `changeBPM`, `bpm`, `lengthInSteps`, and
 charts marked `format: "psych_v1"` use absolute lanes 0-3 for the player and
 4-7 for the opponent. Lane modulo four maps to Left, Down, Up, Right, and
 sustain lengths keep the corresponding pose active.
+
+## Local desktop bridge
+
+Start the optional FastAPI bridge on loopback:
+
+```bash
+python src/local_bridge.py
+```
+
+It listens on `127.0.0.1:8000` and exposes structured app target/launch,
+mouse, keyboard, hotkey, and screenshot endpoints. It only resolves the
+configured app IDs and never accepts arbitrary shell commands. Local
+Sparrow/TexturePacker XML spritesheets and character JSON files can be loaded
+with `asset_parser.py`.
