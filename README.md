@@ -37,6 +37,12 @@ Reference image filenames are documented in
 for smoke tests; replace them with project-owned reference art before
 conditioning a render.
 
+`OSWorldBridge` provides deterministic cubic-Bezier cursor paths with
+overshoot, micro-jitter, deceleration, natural typing cadence, screenshot
+streams, and a visible cursor overlay. Typed text is never retained in the
+action log; install `mss` and `pyautogui` from `requirements.txt` to enable the
+desktop adapter.
+
 `FNF-OMNI-VIDEO-V1` is a hybrid 1:1 video architecture. Its
 `FNFOmniVideoV1Pipeline` combines AnimateDiff, OpenPose ControlNet, and custom
 LoRA weights, while OpenCV draws the timing-sensitive FNF arrows, strumline,
