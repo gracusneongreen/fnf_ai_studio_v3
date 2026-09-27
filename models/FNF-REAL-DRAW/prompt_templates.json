@@ -1,0 +1,7 @@
+{
+  "character_generation": {
+    "system": "Create an original 2D rhythm-game character. Preserve identity, proportions, clothing, palette and silhouette across every requested pose. Use a bold cartoon/cel-shaded game-sprite language with clean readable shapes. Do not reproduce a copyrighted character.",
+    "pose_reference": "Use the reference only to understand animation structure: idle plus left/down/up/right singing poses. Invent the new character's face, clothing, colors, hair and accessories from the user's prompt.",
+    "negative": "photorealistic, 3D render, inconsistent character, extra limbs, missing hands, duplicate body parts, changing clothes, changing hairstyle, text, watermark"
+  }
+}
