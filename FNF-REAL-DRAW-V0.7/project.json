@@ -1,0 +1,8 @@
+{
+  "name": "FNF-REAL-DRAW",
+  "version": "0.7.0",
+  "codename": "REAL MOTION",
+  "features": ["local-chat", "motion-sequences", "pose-interpolation", "character-lock", "engine-export"],
+  "animation_contract": ["idle", "singLEFT", "singDOWN", "singUP", "singRIGHT"],
+  "data_policy": "licensed_user_owned_or_authorized"
+}
