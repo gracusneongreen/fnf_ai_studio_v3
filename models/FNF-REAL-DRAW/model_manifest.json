@@ -1,0 +1,49 @@
+{
+  "model_name": "FNF-REAL-DRAW",
+  "version": "0.1.0",
+  "type": "character_and_asset_generation",
+  "purpose": "Generate editable FNF-inspired 2D game assets from text, sketches, pose guides, and reference sheets.",
+  "outputs": [
+    "character_sprite_sheet",
+    "animation_frames",
+    "background",
+    "icon",
+    "expression_sheet",
+    "body_parts_layers"
+  ],
+  "conditioning": {
+    "text": true,
+    "sketch": true,
+    "pose": true,
+    "reference_image": true,
+    "palette": true,
+    "animation_timing": true
+  },
+  "style_controls": {
+    "line_weight": "consistent",
+    "cel_shading": true,
+    "bold_shapes": true,
+    "expressive_pose": true,
+    "transparent_background": true,
+    "sprite_sheet_export": true
+  },
+  "safety": {
+    "training_data": "licensed_or_user_provided_only",
+    "identity_copying": "disabled",
+    "copyrighted_character_reproduction": "user_reference_or_license_required"
+  },
+  "training": {
+    "base_model": "configurable",
+    "adapter": "LoRA",
+    "resolution": 512,
+    "recommended_frames_per_character": 12,
+    "dataset_format": "image-caption-jsonl"
+  },
+  "export": {
+    "png": true,
+    "webp": true,
+    "aseprite_json": true,
+    "psych_engine_xml": true,
+    "psych_engine_character_json": true
+  }
+}
