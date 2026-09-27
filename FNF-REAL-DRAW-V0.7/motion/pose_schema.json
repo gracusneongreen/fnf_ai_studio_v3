@@ -1,0 +1,32 @@
+{
+  "version": "0.7",
+  "coordinate_system": "pixel_xy_origin_top_left",
+  "sequence": {
+    "fps": "number",
+    "frame_count": "integer",
+    "character_master": "object",
+    "frames": [
+      {
+        "frame": "integer",
+        "time": "number",
+        "action": "string",
+        "joints": {
+          "head": [0, 0],
+          "neck": [0, 0],
+          "shoulder_l": [0, 0],
+          "shoulder_r": [0, 0],
+          "elbow_l": [0, 0],
+          "elbow_r": [0, 0],
+          "hand_l": [0, 0],
+          "hand_r": [0, 0],
+          "hip": [0, 0],
+          "knee_l": [0, 0],
+          "knee_r": [0, 0],
+          "foot_l": [0, 0],
+          "foot_r": [0, 0]
+        },
+        "confidence": {}
+      }
+    ]
+  }
+}
