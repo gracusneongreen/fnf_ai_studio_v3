@@ -9,3 +9,6 @@ models/**/*.safetensors
 models/**/*.bin
 models/**/*.ckpt
 models/**/*.pt
+.env
+.env.*
+!.env.example
