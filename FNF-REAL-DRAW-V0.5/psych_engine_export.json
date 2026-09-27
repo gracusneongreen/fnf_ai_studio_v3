@@ -1,0 +1,16 @@
+{
+  "format": "psych-engine-character-package",
+  "required": [
+    "character.png",
+    "character.xml",
+    "character.json"
+  ],
+  "animations": [
+    "idle",
+    "singLEFT",
+    "singDOWN",
+    "singUP",
+    "singRIGHT"
+  ],
+  "notes": "Export metadata only. Exact offsets and atlas coordinates must be populated from generated frames."
+}
