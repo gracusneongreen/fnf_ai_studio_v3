@@ -1,0 +1,8 @@
+{
+  "sequence_id":"demo_idle_to_step",
+  "fps":24,
+  "frames":[
+    {"frame":0,"time":0.0,"joints":{"head":[512,120],"neck":[512,180],"shoulder_l":[470,190],"shoulder_r":[555,190],"elbow_l":[430,250],"elbow_r":[600,245],"hand_l":[410,320],"hand_r":[625,315],"hip":[515,390],"knee_l":[480,520],"knee_r":[555,515],"foot_l":[450,650],"foot_r":[590,645]}},
+    {"frame":1,"time":0.0417,"joints":{"head":[513,121],"neck":[513,181],"shoulder_l":[471,191],"shoulder_r":[556,191],"elbow_l":[431,251],"elbow_r":[601,246],"hand_l":[411,321],"hand_r":[626,316],"hip":[516,391],"knee_l":[482,521],"knee_r":[557,514],"foot_l":[452,651],"foot_r":[591,644]}}
+  ]
+}
