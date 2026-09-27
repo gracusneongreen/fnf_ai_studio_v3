@@ -1,0 +1,11 @@
+{
+  "version": "0.4.0",
+  "backend": "diffusers-compatible",
+  "model_weights": "external",
+  "required_capabilities": ["text_to_image"],
+  "optional_capabilities": ["image_to_image", "controlnet", "ip_adapter", "inpainting"],
+  "input": ["prompt", "negative_prompt", "seed"],
+  "output": ["png"],
+  "identity_strategy": "master_image_plus_controlled_pose_jobs",
+  "pose_contract": ["idle", "singLEFT", "singDOWN", "singUP", "singRIGHT"]
+}
