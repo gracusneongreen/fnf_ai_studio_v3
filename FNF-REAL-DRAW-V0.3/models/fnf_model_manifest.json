@@ -1,0 +1,39 @@
+{
+  "name": "FNF-REAL-DRAW-FNF-MODEL",
+  "version": "0.3.0",
+  "role": "character_generation_orchestrator",
+  "description": "FNF-aware orchestration model contract for original rhythm-game characters.",
+  "inputs": [
+    "natural_language_prompt",
+    "user_sketch",
+    "licensed_reference",
+    "palette",
+    "phase",
+    "pose"
+  ],
+  "knowledge": {
+    "animation_schema": ["idle", "singLEFT", "singDOWN", "singUP", "singRIGHT"],
+    "asset_schema": ["PNG", "Sparrow XML", "Psych Engine character data"],
+    "reference_character": "Boyfriend",
+    "reference_use": "structural animation vocabulary only"
+  },
+  "pipeline": [
+    "chat_understanding",
+    "character_master",
+    "pose_generation",
+    "identity_consistency",
+    "corruption_phase",
+    "frame_quality_control",
+    "sprite_sheet",
+    "engine_export"
+  ],
+  "image_backend": {
+    "status": "pluggable",
+    "weights_in_repository": false,
+    "note": "Connect a licensed diffusion/flow image backend; this manifest is not itself model weights."
+  },
+  "training_policy": {
+    "allowed": ["user_owned", "licensed", "public_domain", "synthetic"],
+    "copyrighted_character_copying": false
+  }
+}
