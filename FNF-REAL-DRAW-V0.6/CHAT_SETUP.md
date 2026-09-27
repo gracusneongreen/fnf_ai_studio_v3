@@ -1,22 +1,30 @@
 # AI Chat setup
 
-V0.6 now includes an AI chat copilot. It understands natural-language requests and returns structured generation jobs.
+V0.6 uses .env for provider and model selection.
 
-PowerShell:
-```powershell
-$env:FNF_CHAT_API_KEY="YOUR_API_KEY"
-$env:FNF_CHAT_MODEL="gpt-4o-mini"
+Install:
+python -m pip install -r requirements.txt
+
+Create .env:
+Copy-Item .env.example .env
+
+OpenAI:
+FNF_CHAT_PROVIDER=openai
+FNF_CHAT_MODEL=gpt-5.6-luna
+OPENAI_API_KEY=YOUR_API_KEY
+
+OpenAI-compatible:
+FNF_CHAT_PROVIDER=openai-compatible
+FNF_CHAT_MODEL=YOUR_MODEL_ID
+FNF_CHAT_API_KEY=YOUR_KEY_IF_REQUIRED
+FNF_CHAT_BASE_URL=http://localhost:1234/v1
+
+Ollama:
+FNF_CHAT_PROVIDER=ollama
+FNF_CHAT_MODEL=llama3.2
+FNF_CHAT_BASE_URL=http://localhost:11434/v1
+
+Start:
 python cli.py chat
-```
 
-Optional OpenAI-compatible endpoint:
-```powershell
-$env:FNF_CHAT_BASE_URL="https://YOUR-ENDPOINT/v1"
-```
-
-Examples:
-- wygeneruj animację z character.png
-- zrób idle, singLEFT, singDOWN, singUP i singRIGHT
-- przygotuj plan oryginalnej postaci i zachowaj spójność ubrań
-
-The first release is a copilot. The local animate command remains the deterministic execution path; a later version can add a permission-gated action runner.
+The startup line shows the active provider and model. Never commit .env.
