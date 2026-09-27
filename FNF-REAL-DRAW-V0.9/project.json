@@ -1,0 +1,9 @@
+{
+  "name":"FNF-REAL-DRAW",
+  "version":"0.9.0",
+  "codename":"REAL POSE AI",
+  "status":"final-motion-foundation",
+  "pipeline":["source","pose_detection","confidence_filter","temporal_smoothing","constraints","retarget","character_render","qc","export"],
+  "detector_adapters":["manual-json","mediapipe-compatible","openpose-compatible","rtmpose-compatible","custom-local"],
+  "data_policy":"licensed_user_owned_or_authorized"
+}
