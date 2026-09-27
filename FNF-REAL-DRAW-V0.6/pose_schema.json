@@ -1,0 +1,23 @@
+{
+  "version": "0.6.0",
+  "poses": {
+    "idle": "neutral rhythmic idle",
+    "singLEFT": "left singing pose",
+    "singDOWN": "down singing pose",
+    "singUP": "up singing pose",
+    "singRIGHT": "right singing pose"
+  },
+  "conditioning": {
+    "source_image": true,
+    "pose_map": "optional",
+    "controlnet": "optional",
+    "ip_adapter": "optional",
+    "identity_reference": true
+  },
+  "quality": {
+    "identity_lock": true,
+    "outfit_lock": true,
+    "palette_lock": true,
+    "silhouette_lock": true
+  }
+}
