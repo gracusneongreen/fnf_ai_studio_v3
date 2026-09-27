@@ -1,0 +1,38 @@
+{
+  "name": "FNF-REAL-DRAW reference pipeline",
+  "version": "0.2.0",
+  "reference_character": {
+    "name": "Boyfriend",
+    "role": "structural_reference_only",
+    "source_type": "open-source engine code references",
+    "observed_animation_contract": [
+      "idle",
+      "singLEFT",
+      "singDOWN",
+      "singUP",
+      "singRIGHT"
+    ],
+    "observed_asset_contract": [
+      "PNG sprite atlas",
+      "Sparrow/XML metadata"
+    ],
+    "note": "Use BF as a pose/animation/schema reference, not as training data for copying the copyrighted character."
+  },
+  "generation_contract": {
+    "input": ["prompt", "optional_sketch", "optional_reference", "palette", "phase_count"],
+    "default_phases": 1,
+    "default_poses": ["idle", "singLEFT", "singDOWN", "singUP", "singRIGHT"],
+    "consistency": {
+      "same_character": true,
+      "same_outfit": true,
+      "same_proportions": true,
+      "same_palette": true
+    },
+    "outputs": [
+      "transparent_png_frames",
+      "sprite_sheet",
+      "sparrow_xml",
+      "character_manifest.json"
+    ]
+  }
+}
