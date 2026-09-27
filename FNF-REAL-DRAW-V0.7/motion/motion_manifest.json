@@ -1,0 +1,14 @@
+{
+  "version": "0.7.0",
+  "motion_categories": [
+    "idle", "walk", "run", "jump", "fall", "turn", "crouch",
+    "lean", "punch", "dance", "singing", "reaction", "transition"
+  ],
+  "sequence_rule": "prefer_temporal_sequences_over_independent_frames",
+  "quality_targets": {
+    "bone_length_stability": true,
+    "foot_contact": true,
+    "temporal_smoothness": true,
+    "character_lock": true
+  }
+}
