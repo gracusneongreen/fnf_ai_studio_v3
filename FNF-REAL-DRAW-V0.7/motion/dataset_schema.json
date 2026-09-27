@@ -1,0 +1,18 @@
+{
+  "version": "0.7",
+  "record": {
+    "sequence_id": "string",
+    "frame_index": "integer",
+    "fps": "number",
+    "source": {
+      "path": "string",
+      "license": "string",
+      "rights_holder": "string",
+      "allowed_for_training": "boolean"
+    },
+    "joints": "object",
+    "confidence": "object",
+    "notes": "string"
+  },
+  "rule": "Only ingest data you are licensed or otherwise authorized to use."
+}
