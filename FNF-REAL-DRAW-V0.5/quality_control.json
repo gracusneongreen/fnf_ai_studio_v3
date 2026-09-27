@@ -1,0 +1,17 @@
+{
+  "version": "0.5.0",
+  "checks": [
+    "source_image_exists",
+    "transparent_background",
+    "same_character_identity",
+    "same_outfit",
+    "same_palette",
+    "same_hair",
+    "same_proportions",
+    "pose_present",
+    "no_duplicate_limbs",
+    "no_missing_limbs",
+    "frame_alignment"
+  ],
+  "failure_action": "reject_frame_and_regenerate"
+}
