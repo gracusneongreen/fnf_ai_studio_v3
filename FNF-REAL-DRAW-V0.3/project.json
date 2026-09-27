@@ -1,0 +1,11 @@
+{
+  "name": "FNF-REAL-DRAW",
+  "version": "0.3.0",
+  "type": "ai-character-workbench",
+  "poses": ["idle", "singLEFT", "singDOWN", "singUP", "singRIGHT"],
+  "phases": ["normal", "corruption_1", "corruption_2", "corruption_3", "nightmare"],
+  "exports": ["png", "webp", "sparrow_xml", "psych_engine"],
+  "input": ["text", "sketch", "reference"],
+  "quality_gates": ["identity", "silhouette", "alpha", "frame_alignment", "pose_completeness"],
+  "reference_mode": "animation_schema_only"
+}
