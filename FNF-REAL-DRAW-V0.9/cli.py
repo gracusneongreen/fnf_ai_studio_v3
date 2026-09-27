@@ -7,17 +7,20 @@ from qc.validator import validate_sequence
 from retarget.rig import retarget_sequence
 
 def main():
-    p=argparse.ArgumentParser(description="FNF-REAL-DRAW V0.9")
+    p=argparse.ArgumentParser(description="FNF-REAL-DRAW V0.9 - REAL POSE AI")
     s=p.add_subparsers(dest="cmd",required=True)
-    d=s.add_parser("detect"); d.add_argument("folder"); d.add_argument("output")
+    d=s.add_parser("detect",help="Run real local YOLO pose detection")
+    d.add_argument("folder"); d.add_argument("output")
+    d.add_argument("--fps",type=float,default=24.0)
+    d.add_argument("--model",default=None); d.add_argument("--device",default=None); d.add_argument("--conf",type=float,default=0.25)
     v=s.add_parser("validate"); v.add_argument("sequence")
     r=s.add_parser("retarget"); r.add_argument("sequence"); r.add_argument("output")
     a=p.parse_args()
     if a.cmd=="detect":
         frames=discover_frames(a.folder)
-        # Adapter is explicit: no hidden detector or model is assumed.
-        result=DetectorAdapter().extract_sequence(frames)
-        Path(a.output).write_text(json.dumps(build_sequence(result),indent=2),encoding="utf-8")
+        if not frames: raise SystemExit("No PNG/JPG/JPEG/WEBP frames found.")
+        result=DetectorAdapter(a.model,a.device,a.conf).extract_sequence(frames)
+        Path(a.output).write_text(json.dumps(build_sequence(result,fps=a.fps),indent=2),encoding="utf-8")
         print(f"Saved {len(result)} detected frames to {a.output}")
     elif a.cmd=="validate":
         data=json.loads(Path(a.sequence).read_text(encoding="utf-8"))
@@ -27,5 +30,5 @@ def main():
         out=retarget_sequence(data)
         Path(a.output).write_text(json.dumps(out,indent=2),encoding="utf-8")
         print(f"Saved retargeted sequence to {a.output}")
-
-if __name__=="__main__": main()
+if __name__=="__main__":
+    main()
