@@ -1,0 +1,7 @@
+{
+  "name":"FNF-REAL-DRAW",
+  "version":"0.8.0",
+  "codename":"MOTION DATASET",
+  "features":["frame-sequences","pose-extraction-contract","normalization","quality-control","retargeting"],
+  "data_policy":"licensed_user_owned_or_authorized"
+}
