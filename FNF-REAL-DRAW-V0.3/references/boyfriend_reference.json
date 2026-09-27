@@ -1,0 +1,16 @@
+{
+  "name": "Boyfriend",
+  "type": "reference",
+  "purpose": "animation and asset schema reference",
+  "image": {
+    "filename": "BOYFRIEND.png",
+    "status": "external_reference_required",
+    "reason": "Binary game artwork is not bundled into this repository."
+  },
+  "observed_contract": {
+    "poses": ["idle", "singLEFT", "singDOWN", "singUP", "singRIGHT"],
+    "atlas": "PNG",
+    "metadata": "Sparrow XML"
+  },
+  "rule": "Do not use the reference to reproduce BF artwork. Use it only to understand the animation/asset contract."
+}
